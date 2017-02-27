@@ -1,0 +1,67 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.1.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+plugins {
+	id "org.asciidoctor.convert" version "1.5.3"
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+jar {
+	baseName = 'withoutdefaults'
+	version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+}
+
+ext {
+	snippetsDirectory = file('build/generated-snippets').absolutePath
+}
+
+test {
+	outputs.dir snippetsDirectory
+}
+
+asciidoctor {
+	attributes 'snippets': snippetsDirectory
+	inputs.dir snippetsDirectory
+	dependsOn test
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+processResources {
+	filesMatching('application.properties') {
+		filter ReplaceTokens, tokens: [
+			snippetsDirectory: snippetsDirectory
+		]
+	}
+}
+
+jar {
+	dependsOn asciidoctor
+	from("${asciidoctor.outputDir}/html5") {
+		into 'static/docs'
+	}
+}

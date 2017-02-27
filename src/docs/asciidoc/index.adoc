@@ -1,0 +1,20 @@
+= Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: right
+:toclevels: 5
+
+== Request
+=== Curl
+include::{snippets}/test/curl-request.adoc[]
+
+=== Http
+include::{snippets}/test/http-request.adoc[]
+
+== Response
+include::{snippets}/test/http-response.adoc[]
+
+=== Headers
+
+include::{snippets}/test/response-headers.adoc[]
